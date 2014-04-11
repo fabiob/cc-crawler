@@ -11,45 +11,41 @@ var http = require('http');
 
 var server = http.createServer(function(req, res) {
   res.writeHead(200, { 'Content-Type': 'text/html' });
-  fetch_fql('select id, text, time from comment where object_id = ' + photo_id + ' order by time desc', res);
+  fetch_fql('select object_id from photo where owner = 129079313911235 order by created desc limit 3', function(err, r) {
+    if (err) {
+      res.writeHead(500, { 'Content-Type': 'text/html' });
+      return res.write(err.message);
+    }
+    
+    var photo_ids = r.data.map(function(d) { return d.object_id; }).join(', ');
+    
+    fetch_fql('select id, text, time from comment where object_id in (' + photo_ids + ') order by time desc', function(err, r) {
+      if (err) {
+        res.writeHead(500, { 'Content-Type': 'text/html' });
+        return res.write(err.message);
+      }
+      render(parse(r), res);
+    });
+  });
   res.end();
 });
 server.listen(3000);
 
-var photo_id = process.argv[2];
-var reward_type = process.argv[3];
-
-if (!photo_id || !reward_type)
-  usage();
-else
-  fetch_fql('select id, text, time from comment where object_id = ' + photo_id + ' order by time desc');
-
-function usage() {
-  console.log('Usage: node cc-crawler.js photo_id reward_type');
-  console.log('Where:');
-  console.log('  photo_id is the ID of the photo to crawl');
-  console.log('  reward_type is one of:');
-  console.log('    0 for Orange Juice');
-  console.log('    1 for Potato Chips');
-  console.log('    4 for Coins');
-}
-
-function fetch_fql(fql, out) {
+function fetch_fql(fql, callback) {
   http.get({ host: 'graph.facebook.com', path: '/fql?' + querystring.stringify({q: fql}) }, function(res) {
     res.setEncoding('utf8');
     var data = '';
     res.on('data', function(chunk) { data += chunk; });
     res.on('end', function() {
       if (res.statusCode === 200)
-        render(parse(data));
+        callback(null, JSON.parse(data));
       else
-        out.write('ERROR: ' + data);
+        callback(new Error(data));
     })
   });
 }
 
-function parse(data) {
-  var json = JSON.parse(data);
+function parse(json) {
   var r = {};
   json.data.forEach(function(comment) {
     var m;

@@ -3,7 +3,6 @@
 // cc-crawler.js
 // -------------
 // Prints out the latest reward URLs of the specified type.
-// TODO: automatically detect the last posts, instead of having to supply a photo_id.
 
 var url = require('url');
 var querystring = require('querystring');
@@ -14,7 +13,7 @@ var server = http.createServer(function(req, res) {
   fetch_fql('select object_id from photo where owner = 129079313911235 order by created desc limit 3', function(err, r) {
     if (err) {
       res.writeHead(500, { 'Content-Type': 'text/html' });
-      return res.write(err.message);
+      return res.end(err.message);
     }
     
     var photo_ids = r.data.map(function(d) { return d.object_id; }).join(', ');
@@ -22,7 +21,7 @@ var server = http.createServer(function(req, res) {
     fetch_fql('select id, text, time from comment where object_id in (' + photo_ids + ') order by time desc', function(err, r) {
       if (err) {
         res.writeHead(500, { 'Content-Type': 'text/html' });
-        return res.write(err.message);
+        return res.end(err.message);
       }
       render(parse(r), res);
     });
@@ -76,4 +75,5 @@ function render(r, out) {
   out.write('</td><td>');
   r.coins.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
   out.write('</td></table>');
+  out.end();
 }

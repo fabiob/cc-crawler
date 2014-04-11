@@ -23,10 +23,9 @@ var server = http.createServer(function(req, res) {
         res.writeHead(500, { 'Content-Type': 'text/html' });
         return res.end(err.message);
       }
-      render(parse(r), res);
+      res.end(render(parse(r)));
     });
   });
-  res.end();
 });
 server.listen(3000);
 
@@ -34,6 +33,7 @@ function fetch_fql(fql, callback) {
   http.get({ host: 'graph.facebook.com', path: '/fql?' + querystring.stringify({q: fql}) }, function(res) {
     res.setEncoding('utf8');
     var data = '';
+    res.on('error', function(e) { callback(e); });
     res.on('data', function(chunk) { data += chunk; });
     res.on('end', function() {
       if (res.statusCode === 200)
@@ -45,7 +45,7 @@ function fetch_fql(fql, callback) {
 }
 
 function parse(json) {
-  var r = {};
+  var r = { chips: [], ojs: [], coins: [], json: json };
   json.data.forEach(function(comment) {
     var m;
     if (m = /http\S+/.exec(comment.text)) {
@@ -54,26 +54,29 @@ function parse(json) {
         
         // reward_type => 0: oj, 1: chips, 4: coins
         var slot = null;
-        switch (parsed.query.reward_type) {
+        switch (Number(parsed.query.reward_type)) {
           case 0: slot = 'ojs'; break;
           case 1: slot = 'chips'; break;
           case 4: slot = 'coins'; break;
         }
         if (slot)
-          (r[slot] = r[slot] || []).push({s: uri, parsed: parsed});
+          r[slot].push({s: uri, parsed: parsed});
       });
     }
   });
+  return r;
 }
 
-function render(r, out) {
-  out.write('<table><thead><tr><th>Chips</th><th>OJs</th><th>Coins</th></tr></thead><tbody><tr>');
-  out.write('<td>');
-  r.chips.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
-  out.write('</td><td>');
-  r.ojs.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
-  out.write('</td><td>');
-  r.coins.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
-  out.write('</td></table>');
-  out.end();
+function render(r) {
+  var s = '';
+  s += '<table style="width: 100%; table-layout: fixed"><thead><tr><th>Chips</th><th>OJs</th><th>Coins</th></tr></thead><tbody><tr valign="top">';
+  s += '<td>';
+  s += r.chips.map(function(uri) { return '<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'; }).join('');
+  s += '</td><td>';
+  s += r.ojs.map(function(uri) { return '<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'; }).join('');
+  s += '</td><td>';
+  s += r.coins.map(function(uri) { return '<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'; }).join('');
+  s += '</td></table>';
+  // s += '<pre>' + JSON.stringify(r, null, '  ') + '</pre>';
+  return s;
 }

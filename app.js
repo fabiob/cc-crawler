@@ -65,7 +65,7 @@ function parse(data) {
           when 4: slot = 'coins'; break;
         }
         if (slot)
-          (r[slot] = r[slot] || []).push(uri);
+          (r[slot] = r[slot] || []).push({s: uri, parsed: parsed});
       });
     }
   });
@@ -74,10 +74,10 @@ function parse(data) {
 function render(r, out) {
   out.write('<table><thead><tr><th>Chips</th><th>OJs</th><th>Coins</th></tr></thead><tbody><tr>');
   out.write('<td>');
-  r.chips.forEach(function(uri) { out.write('<a href="' + uri + '">' + uri + '</a><br>'); });
+  r.chips.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
   out.write('</td><td>');
-  r.ojs.forEach(function(uri) { out.write('<a href="' + uri + '">' + uri + '</a><br>'); });
+  r.ojs.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
   out.write('</td><td>');
-  r.coins.forEach(function(uri) { out.write('<a href="' + uri + '">' + uri + '</a><br>'); });
+  r.coins.forEach(function(uri) { out.write('<a href="' + uri.s + '">' + uri.parsed.query.reward_key + '</a><br>'); });
   out.write('</td></table>');
 }

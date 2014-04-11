@@ -56,9 +56,9 @@ function parse(json) {
         // reward_type => 0: oj, 1: chips, 4: coins
         var slot = null;
         switch (parsed.query.reward_type) {
-          when 0: slot = 'ojs'; break;
-          when 1: slot = 'chips'; break;
-          when 4: slot = 'coins'; break;
+          case 0: slot = 'ojs'; break;
+          case 1: slot = 'chips'; break;
+          case 4: slot = 'coins'; break;
         }
         if (slot)
           (r[slot] = r[slot] || []).push({s: uri, parsed: parsed});

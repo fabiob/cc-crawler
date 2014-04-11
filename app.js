@@ -35,7 +35,6 @@ app.get('/', function(req, res) {
         res.writeHead(500, { 'Content-Type': 'text/html' });
         return res.end(err.message);
       }
-      // res.writeHead(200, { 'Content-Type': 'text/html' });
       res.render('index', { r: parse(r) });
     });
   });

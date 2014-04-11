@@ -71,7 +71,7 @@ function parse(json) {
           case 1: slot = 'chips'; break;
           case 4: slot = 'coins'; break;
         }
-        if (slot)
+        if (slot && !r[slot].some(function(el) { return el.s === uri; }))
           r[slot].push({s: uri, parsed: parsed});
       });
     }

@@ -1,0 +1,22 @@
+extend layout
+block content
+  table(style='width: 100%; table-layout: fixed')
+    thead
+      tr
+        th Chips
+        th OJs
+        th Coins
+    tbody
+      tr(valign='top')
+        td
+          - each uri in r.chips
+            a(href=uri.s)= uri.parsed.query.reward_key
+            br
+        td
+          - each uri in r.ojs
+            a(href=uri.s)= uri.parsed.query.reward_key
+            br
+        td
+          - each uri in r.coins
+            a(href=uri.s)= uri.parsed.query.reward_key
+            br

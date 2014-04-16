@@ -22,7 +22,7 @@ app.use(stylus.middleware({ src: __dirname + '/public', compile: compile }));
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function(req, res) {
-  fetch_fql('select object_id from photo where owner = 129079313911235 order by created desc limit 3', function(err, r) {
+  fetch_fql('select object_id from photo where owner = 129079313911235 order by created desc limit 10', function(err, r) {
     if (err) {
       res.writeHead(500, { 'Content-Type': 'text/html' });
       return res.end(err.message);

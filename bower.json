@@ -1,0 +1,8 @@
+{
+  "name": "cc-crawler",
+  "version": "1.0.0",
+  "dependencies": {
+    "jquery": "*",
+    "github-fork-ribbon-css": "*"
+  }
+}

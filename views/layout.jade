@@ -3,6 +3,12 @@ html
   head
     title Criminal Case Crawler
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel="stylesheet", href="/components/github-fork-ribbon-css/gh-fork-ribbon.css")
+    <!--[if lt IE 9]> <link rel="stylesheet" href="/components/github-fork-ribbon-css/gh-fork-ribbon.ie.css"> <![endif]-->
   body
+    .github-fork-ribbon-wrapper.right
+      .github-fork-ribbon
+        a(href="https://github.com/fabiob/cc-crawler") Fork me on GitHub
+
     h1 Criminal Case Crawler
     block content

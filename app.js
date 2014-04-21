@@ -39,7 +39,7 @@ app.get('/', function(req, res) {
     });
   });
 });
-app.listen(3000)
+app.listen(process.env.PORT || 3000, process.env.IP || '0.0.0.0');
 
 function fetch_fql(fql, callback) {
   http.get({ host: 'graph.facebook.com', path: '/fql?' + querystring.stringify({q: fql}) }, function(res) {

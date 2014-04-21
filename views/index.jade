@@ -1,31 +1,18 @@
 extend layout
 block content
-  table(style='width: 100%; table-layout: fixed')
-    thead
-      tr
-        th
-          img(src='https://duapys4lcv8ju.cloudfront.net/r18866/pics/rewards/reward_1.png', width=114, height=114)
-          br
-          | Chips
-        th
-          img(src='https://duapys4lcv8ju.cloudfront.net/r18866/pics/rewards/reward_0.png', width=114, height=114)
-          br
-          | OJs
-        th
-          img(src='https://duapys4lcv8ju.cloudfront.net/r18866/pics/rewards/reward_4.png', width=114, height=114)
-          br
-          | Coins
-    tbody
-      tr(valign='top')
-        td
-          - each uri in r.chips
-            a(href=uri.s)= uri.parsed.query.reward_key
-            br
-        td
-          - each uri in r.ojs
-            a(href=uri.s)= uri.parsed.query.reward_key
-            br
-        td
-          - each uri in r.coins
-            a(href=uri.s)= uri.parsed.query.reward_key
-            br
+  .row
+    .col-md-4
+      h1.reward.reward-1 Chips
+      - each uri in r.chips
+        a(href=uri.s)= uri.parsed.query.reward_key
+        br
+    .col-md-4
+      h1.reward.reward-4 OJs
+      - each uri in r.ojs
+        a(href=uri.s)= uri.parsed.query.reward_key
+        br
+    .col-md-4
+      h1.reward.reward-4 Coins
+      - each uri in r.coins
+        a(href=uri.s)= uri.parsed.query.reward_key
+        br

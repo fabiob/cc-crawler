@@ -1,18 +1,39 @@
 extend layout
 block content
-  .row
-    .col-md-4
-      h1.reward.reward-1 Chips
-      - each uri in r.chips
-        a(href=uri.s)= uri.parsed.query.reward_key
-        br
-    .col-md-4
-      h1.reward.reward-4 OJs
-      - each uri in r.ojs
-        a(href=uri.s)= uri.parsed.query.reward_key
-        br
-    .col-md-4
-      h1.reward.reward-4 Coins
-      - each uri in r.coins
-        a(href=uri.s)= uri.parsed.query.reward_key
-        br
+  script.
+    $(function() {
+      $.getJSON('/json', function(data) {
+        $.each(data, function(section, items) {
+          if (section === 'json')
+            return;
+          var ul = $('#' + section).find('ul');
+          $.each(items, function(_, uri) {
+            var li = $('<li>', { 'class': 'list-group-item' }).append(
+              $('<a>', { href: uri.s, text: uri.parsed.query.reward_key })
+            ).appendTo(ul);
+          });
+        });
+      }).fail(function() { alert("Error while fetching the JSON"); });
+    });
+  .row.rewards
+    .col-md-4#chips
+      .panel.panel-primary
+        .panel-heading
+          h2 Chips
+        .panel-body
+          | Limit: 1 per day
+        ul.list-group
+    .col-md-4#ojs
+      .panel.panel-primary
+        .panel-heading
+          h2 OJs
+        .panel-body
+          | Limit: 3 per day
+        ul.list-group
+    .col-md-4#coins
+      .panel.panel-primary
+        .panel-heading
+          h2 Coins
+        .panel-body
+          | Limit: 3 per day
+        ul.list-group

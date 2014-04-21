@@ -1,20 +1,25 @@
 extend layout
 block content
   script.
-    $(function() {
+    function updateLists() {
       $.getJSON('/json', function(data) {
         $.each(data, function(section, items) {
-          if (section === 'json')
-            return;
+          items.reverse();
           var ul = $('#' + section).find('ul');
           $.each(items, function(_, uri) {
-            var li = $('<li>', { 'class': 'list-group-item' }).append(
-              $('<a>', { href: uri.s, text: uri.parsed.query.reward_key })
-            ).appendTo(ul);
+            var reward_key = uri.parsed.query.reward_key;
+            if ($("a:contains('" + reward_key + "')").length === 0) {
+              var li = $('<li>', { 'class': 'list-group-item list-group-item-success' }).append(
+                $('<a>', { href: uri.s, text: reward_key })
+              ).prependTo(ul);
+              setTimeout(function() { li.removeClass('list-group-item-success', 5000); }, 10000);
+            }
           });
         });
+        setTimeout(updateLists, 1500);
       }).fail(function() { alert("Error while fetching the JSON"); });
-    });
+    }
+    $(function() { updateLists(); });
   .row.rewards
     .col-md-4#chips
       .panel.panel-primary

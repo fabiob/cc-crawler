@@ -59,7 +59,7 @@ function fetch_fql(fql, callback) {
 }
 
 function parse(json) {
-  var r = { chips: [], ojs: [], coins: [], json: json };
+  var r = { chips: [], ojs: [], coins: [] };
   json.data.forEach(function(comment) {
     var m = /http\S+/.exec(comment.text);
     (m || []).forEach(function(uri) {

@@ -15,8 +15,14 @@
     });
   }
   
-  $(function() { mainLoop() });
-  
+  $(function() {
+    // bootstraps the main loop
+    mainLoop();
+    
+    // invalidates cached photo_ids every 15 mins
+    setInterval(function() { photo_ids = null; }, 15 * 60000);
+  });
+
   function fetchPhotos(cb) {
     if (photo_ids)
       return cb(photo_ids);

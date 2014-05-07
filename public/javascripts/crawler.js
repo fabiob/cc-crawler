@@ -1,7 +1,8 @@
 (function($) {
   'use strict';
   
-  var photo_ids = null;
+  var photo_ids = null,
+      old_rewards = [];
   
   function mainLoop() {
     fetchPhotos(function(photos) {
@@ -64,7 +65,8 @@
       var ul = $('#' + section).find('ul');
       var firstRun = $('li', ul).length === 0;
       $.each(items, function(_, r) {
-        if ($("a:contains('" + r.reward_key + "')").length === 0) {
+        if (old_rewards.indexOf(r.reward_key) === -1) {
+          old_rewards.push(r.reward_key);
           var li = $('<li>', { 'class': 'list-group-item' }).append(
             $('<a>', { href: r.uri, text: r.reward_key })
           ).prependTo(ul);
@@ -72,6 +74,7 @@
             li.addClass('list-group-item-success').removeClass('list-group-item-success', 10000);
         }
       });
+      $('li', ul).slice(10).remove();
     });
     return cb();
   }
